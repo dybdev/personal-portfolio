@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { motion, useAnimationControls, useReducedMotion } from "motion/react";
 
 export interface RevealProps {
   children: ReactNode;
@@ -19,37 +19,46 @@ export function Reveal({
   y = 38,
 }: RevealProps) {
   const reduced = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const controls = useAnimationControls();
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Before hydration on client or if reduced motion is requested, render standard content
-  if (!mounted || reduced) {
-    return <div className={className}>{children}</div>;
-  }
+    const element = ref.current;
+    if (!element) return;
+    // Keep server-rendered content visible and never replace the DOM wrapper.
+    if (reduced || element.getBoundingClientRect().top < window.innerHeight) {
+      controls.set({ opacity: 1, y: 0 });
+      return;
+    }
+    controls.set({ opacity: 0, y });
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        void controls.start({ opacity: 1, y: 0 });
+        observer.disconnect();
+      }
+    }, { rootMargin: "0px 0px -40px 0px", threshold: 0.05 });
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      controls.stop();
+    };
+  }, [controls, reduced, y]);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{
-        once: true,
-        margin: "0px 0px -70px 0px",
-        amount: 0.12,
-      }}
+      ref={ref}
+      initial={false}
+      animate={controls}
       transition={{
         duration,
         delay,
         ease: [0.16, 1, 0.3, 1],
       }}
       className={className}
-      onFocusCapture={(e) => {
+      onFocusCapture={() => {
         // Accessibility: instantly show content when focused via keyboard navigation
-        const target = e.currentTarget;
-        target.style.opacity = "1";
-        target.style.transform = "none";
+        controls.stop();
+        controls.set({ opacity: 1, y: 0 });
       }}
     >
       {children}

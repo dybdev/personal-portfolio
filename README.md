@@ -26,7 +26,9 @@ pnpm build
 - Replace the case study placeholder sections in `app/work/[slug]/page.tsx` with actual project content.
 - Enable indexing in `app/layout.tsx` after replacing sample content. Set canonical metadata when your production domain is known.
 
-No email delivery service or credentials are needed for the email link. No contact submission form is included.
+The contact form uses a Server Action and the Resend API. Copy `.env.example` to `.env.local`, then set `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` (a sender on a verified Resend domain), and `CONTACT_TO_EMAIL` (your receiving address). Add these same server-only variables in your deployment settings. Without them, submission returns an honest unavailable message; it does not claim to send mail. Inputs are validated on the server and a honeypot rejects basic bot submissions. No submissions are stored in a database.
+
+Set real social profile URLs in `socials` in `content/portfolio.ts`. Empty URLs are displayed as “Coming soon” text, never linked to invented accounts. Set `portfolio.email` separately if you also want a public mailto link.
 
 Deploy with standard Next.js settings on Vercel, using this directory as the root. The local `SKILL.md` is the portfolio design authority referred to as `Portfolio-SKILL.md` by `AGENTS.md`.
 

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowDown,
   ArrowDownRight,
@@ -7,6 +6,8 @@ import {
 } from "lucide-react";
 import { SectionLabel } from "@/components/section-label";
 import { Reveal } from "@/components/reveal";
+import { PortraitCard } from "@/components/portrait-card";
+import { ProjectGallery } from "@/components/project-gallery";
 import { portfolio, projects } from "@/content/portfolio";
 
 export default function Home() {
@@ -79,8 +80,9 @@ export default function Home() {
       <section
         id="work"
         aria-labelledby="work-title"
-        className="mx-auto max-w-[1600px] px-gutter py-16 md:py-28"
+        className="py-16 md:py-28"
       >
+        <div className="mx-auto max-w-[1600px] px-gutter">
         <Reveal delay={0.06}>
           <SectionLabel number="01">Selected work</SectionLabel>
         </Reveal>
@@ -96,56 +98,11 @@ export default function Home() {
           <p className="max-w-64 text-sm leading-6 text-foreground/70">
             A collection in progress.
             <br />
-            Sample projects shown below.
+            Selected work shown below.
           </p>
         </Reveal>
-        <div className="mt-12 grid gap-x-10 gap-y-14 md:mt-16 md:grid-cols-2 md:gap-y-20">
-          {projects.map((project, i) => (
-            <Reveal
-              key={project.slug}
-              delay={0.15 + (i % 2) * 0.18}
-              className={`min-w-0 ${i === 1 ? "md:mt-28" : ""} ${i === 2 ? "md:col-span-2" : ""}`}
-            >
-              <Link
-                href={`/work/${project.slug}`}
-                className="group block min-w-0"
-              >
-                <div
-                  className={`relative overflow-hidden rounded-lg bg-surface ${i === 2 ? "aspect-[4/3] md:aspect-[2.25/1]" : "aspect-[4/3]"}`}
-                >
-                  <Image
-                    src={project.image}
-                    alt={`Neutral graphic placeholder for ${project.title}`}
-                    fill
-                    sizes={
-                      i === 2
-                        ? "(max-width: 1600px) 90vw, 1440px"
-                        : "(max-width: 767px) 90vw, 45vw"
-                    }
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.025]"
-                  />
-                  <span className="liquid-glass absolute top-5 left-5 rounded-full px-3.5 py-1.5 text-xs font-medium tracking-tight">
-                    Sample project
-                  </span>
-                </div>
-                <div className="mt-5 flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-medium tracking-[-0.035em] md:text-2xl">
-                      {project.title}
-                    </h3>
-                    <p className="mt-2 text-xs leading-5 text-foreground/70">
-                      {project.category} <span className="mx-2">/</span>{" "}
-                      {portfolio.year}
-                    </p>
-                  </div>
-                  <span className="liquid-glass glass-hover relative flex size-11 shrink-0 items-center justify-center rounded-full">
-                    <ArrowUpRight aria-hidden="true" className="size-5" />
-                  </span>
-                </div>
-              </Link>
-            </Reveal>
-          ))}
         </div>
+        <ProjectGallery projects={projects} />
       </section>
 
       <section id="about" aria-labelledby="about-title" className="bg-surface">
@@ -157,21 +114,11 @@ export default function Home() {
               </Reveal>
             </div>
             <Reveal delay={0.22} className="mt-8 md:mt-12">
-              <div className="group relative overflow-hidden rounded-lg border border-foreground/10 bg-primary/5">
-                <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  <Image
-                    src={portfolio.avatar}
-                    alt={`Monochrome portrait of ${portfolio.name}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 420px"
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
-                  />
-                  <div className="absolute inset-x-4 bottom-3 flex items-center justify-between rounded-full border border-foreground/15 bg-background/60 px-3.5 py-1.5 text-[11px] uppercase tracking-[0.14em] text-foreground/80 backdrop-blur-md">
-                    <span>Portrait</span>
-                    <span>{portfolio.year}</span>
-                  </div>
-                </div>
-              </div>
+              <PortraitCard
+                name={portfolio.name}
+                image={portfolio.avatar}
+                year={portfolio.year}
+              />
             </Reveal>
           </div>
           <div className="flex flex-col justify-between md:col-span-8">

@@ -4,7 +4,13 @@ export type Project = {
   title: string;
   category: string;
   image: string;
+  thumbnail: string;
   summary: string;
+  url?: string;
+  overview?: string;
+  challenge?: string;
+  outcome?: string;
+  tags?: string[];
 };
 
 // Replace these clearly labeled samples with real work before publishing.
@@ -19,32 +25,66 @@ export const portfolio = {
     "Share your approach to a project, the details you care about, and what a collaboration with you looks like.",
 };
 
+// Add your real profile URLs to activate these footer links.
+export const socials = [
+  { label: "GitHub", href: "" },
+  { label: "LinkedIn", href: "" },
+  { label: "Instagram", href: "" },
+];
+
 export const projects: Project[] = [
   {
-    slug: "project-one",
+    slug: "pines-va",
     number: "01",
-    title: "Project Name 01",
-    category: "Website / Development",
-    image: "/images/project-01.svg",
+    title: "Pines VA",
+    category: "Web Platform / Remote Staffing",
+    image: "/images/project-pinesva.png",
+    thumbnail: "/images/pines-va.png",
+    url: "https://www.thepinesva.com/",
     summary:
-      "Introduce the project, its purpose, and the people it was made for. Replace this sample with a real project description.",
+      "A dedicated virtual assistant staffing platform connecting growing businesses with pre-vetted executive, medical, sales, and administrative support specialists.",
+    overview:
+      "Pines VA streamlines remote talent matching for businesses needing specialized assistance across operations, healthcare administration, and client outreach. Built with a focus on trust, clear onboarding flows, and enterprise-grade data security protocols.",
+    challenge:
+      "Designing a modern, trustworthy digital presence that clearly differentiates specialized VA services (general, executive, medical, and inside sales) while simplifying the consultation and booking process for prospective clients.",
+    outcome:
+      "Delivered an accessible, responsive platform featuring clear service tiers, transparent security assurances (HIPAA compliance, strict confidentiality NDAs), and streamlined inquiry forms that drive qualified client consultations.",
+    tags: ["Next.js", "Tailwind CSS", "Remote Staffing", "HIPAA Compliant"],
   },
   {
-    slug: "project-two",
+    slug: "zero-scripts",
     number: "02",
-    title: "Project Name 02",
-    category: "Digital / Design",
-    image: "/images/project-02.svg",
+    title: "Zero Scripts",
+    category: "E-Commerce / FiveM Resource Platform",
+    image: "/images/project-zeroscripts.png",
+    thumbnail: "/images/zero-scripts.png",
+    url: "https://zero-scripts.vercel.app/",
     summary:
-      "Describe the problem behind this project and the idea that shaped your solution. This is placeholder case study content.",
+      "Performance-first FiveM gaming resources platform and digital storefront featuring secure server-authoritative validation, clean framework integrations, and comprehensive documentation.",
+    overview:
+      "Zero Scripts provides production-ready game server assets and systems built for performance, security, and developer maintainability. Integrated with Tebex checkout and framework adapters for Qbox, QBCore, and ESX environments.",
+    challenge:
+      "Creating a high-performance storefront and documentation hub with low-latency client paths, server-authoritative validation to prevent exploits, and multi-currency checkout support tailored for gaming server communities.",
+    outcome:
+      "Engineered a sleek, dark-themed storefront featuring real-time resource cataloging, seamless cart workflows via Tebex API, versioned developer guides, and modular framework adapters.",
+    tags: ["Next.js", "FiveM", "Tebex API", "TypeScript", "E-Commerce"],
   },
   {
-    slug: "project-three",
+    slug: "dyb-portfolio",
     number: "03",
-    title: "Project Name 03",
-    category: "Website / Design & development",
-    image: "/images/project-03.svg",
+    title: "dybdev Portfolio",
+    category: "Portfolio / Editorial Web Experience",
+    image: "/images/project-portfolio.png",
+    thumbnail: "/images/dybdev-portfolio.png",
+    url: "https://dyb-portfolio-eta.vercel.app/",
     summary:
-      "Share the context, your contribution, and the final experience. Replace this sample with details from your own work.",
+      "A minimalist, typography-led personal portfolio website exploring considered monochrome aesthetics, fluid spring interactions, and purposeful digital design.",
+    overview:
+      "A showcase of modern web craftsmanship focusing on clean typography, negative space, responsive design systems, and subtle physics-based micro-interactions.",
+    challenge:
+      "Developing a restrained monochrome design system that communicates elegance and distinct personality without relying on heavy gradients or decorative noise.",
+    outcome:
+      "Built a high-performance editorial web experience featuring fluid card interactions, seamless dark and light theme switching, and accessible layout standards.",
+    tags: ["Next.js", "Motion", "Tailwind CSS", "Editorial Design"],
   },
 ];

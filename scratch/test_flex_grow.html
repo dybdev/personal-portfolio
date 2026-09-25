@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  .track {
+    display: flex;
+    width: 1504px;
+    gap: 28px;
+    background: #111;
+    padding: 16px 0;
+  }
+  .card {
+    height: 300px;
+    border-radius: 12px;
+    flex-basis: 260px;
+    flex-shrink: 0;
+    transition: flex-grow 500ms cubic-bezier(0.25, 1, 0.5, 1);
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body style="background: #000; margin: 40px;">
+  <div class="track" id="track">
+    <div id="c1" class="card" style="flex-grow: 1;" onclick="setActive(0)">Card 1 (Open)</div>
+    <div id="c2" class="card" style="flex-grow: 0;" onclick="setActive(1)">Card 2 (Folded)</div>
+    <div id="c3" class="card" style="flex-grow: 0;" onclick="setActive(2)">Card 3 (Folded)</div>
+  </div>
+
+  <div style="display: flex; width: 1504px; gap: 12px; margin-top: 16px;" id="bars">
+    <div id="b1" style="flex: 1; height: 4px; background: white; border-radius: 2px;"></div>
+    <div id="b2" style="flex: 1; height: 4px; background: #333; border-radius: 2px;"></div>
+    <div id="b3" style="flex: 1; height: 4px; background: #333; border-radius: 2px;"></div>
+  </div>
+
+  <script>
+    function setActive(idx) {
+      const cards = [document.getElementById('c1'), document.getElementById('c2'), document.getElementById('c3')];
+      const bars = [document.getElementById('b1'), document.getElementById('b2'), document.getElementById('b3')];
+      cards.forEach((c, i) => {
+        c.style.flexGrow = (i === idx) ? 1 : 0;
+        c.innerText = `Card ${i + 1} (${i === idx ? 'Open' : 'Folded'})`;
+        bars[i].style.background = (i === idx) ? 'white' : '#333';
+      });
+    }
+  </script>
+</body>
+</html>

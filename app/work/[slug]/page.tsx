@@ -49,9 +49,22 @@ export default async function ProjectPage({
         </Link>
       </Reveal>
       <Reveal delay={0.18}>
-        <p className="mt-10 text-xs uppercase tracking-[0.14em] text-foreground/70">
-          Sample case study / {project.number}
-        </p>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-xs uppercase tracking-[0.14em] text-foreground/70">
+            Case study / {project.number}
+          </p>
+          {project.url ? (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="liquid-glass glass-hover inline-flex min-h-10 items-center gap-2 rounded-full px-5 py-2 text-xs font-medium"
+            >
+              Visit live site
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            </a>
+          ) : null}
+        </div>
       </Reveal>
       <Reveal delay={0.3}>
         <h1 className="mt-5 text-display leading-[1.05] font-medium tracking-[-0.07em]">
@@ -59,20 +72,33 @@ export default async function ProjectPage({
         </h1>
       </Reveal>
       <Reveal delay={0.42}>
-        <div className="mt-8 flex flex-wrap justify-between gap-4 text-sm">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 text-sm">
           <span>{project.category}</span>
-          <span>{portfolio.year}</span>
+          {project.tags ? (
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 text-xs text-foreground/80"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span>{portfolio.year}</span>
+          )}
         </div>
       </Reveal>
       <Reveal delay={0.56}>
         <Image
           src={project.image}
-          alt={`Neutral graphic placeholder for ${project.title}`}
+          alt={`${project.title} platform screenshot`}
           width={1200}
           height={900}
           priority
           sizes="(max-width: 1600px) 90vw, 1440px"
-          className="mt-10 aspect-[4/3] w-full rounded-lg object-cover md:aspect-[16/9]"
+          className="mt-10 aspect-[4/3] w-full rounded-lg object-cover shadow-sm md:aspect-[16/9]"
         />
       </Reveal>
       <section className="grid gap-8 border-b border-foreground/15 py-16 md:grid-cols-12 md:py-24">
@@ -81,10 +107,16 @@ export default async function ProjectPage({
           <p className="max-w-3xl text-2xl leading-relaxed tracking-[-0.03em] md:text-3xl">
             {project.summary}
           </p>
-          <p className="mt-6 text-sm leading-7 text-foreground/70">
-            This is a case study template. Project imagery, scope, process, and
-            outcomes will be added with the completed work.
-          </p>
+          {project.overview ? (
+            <p className="mt-6 text-base leading-8 text-foreground/80">
+              {project.overview}
+            </p>
+          ) : (
+            <p className="mt-6 text-sm leading-7 text-foreground/70">
+              This is a case study template. Project imagery, scope, process, and
+              outcomes will be added with the completed work.
+            </p>
+          )}
         </Reveal>
       </section>
       <section className="grid gap-8 py-16 md:grid-cols-12">
@@ -92,16 +124,16 @@ export default async function ProjectPage({
         <Reveal delay={0.18} className="grid gap-8 md:col-span-8 lg:grid-cols-2">
           <div>
             <h3 className="text-xl font-medium">The challenge</h3>
-            <p className="mt-4 text-base leading-8">
-              Add the original brief, the constraints you worked within, and the
-              questions you set out to answer.
+            <p className="mt-4 text-base leading-8 text-foreground/80">
+              {project.challenge ??
+                "Add the original brief, the constraints you worked within, and the questions you set out to answer."}
             </p>
           </div>
           <div>
             <h3 className="text-xl font-medium">The outcome</h3>
-            <p className="mt-4 text-base leading-8">
-              Describe what you delivered and what you learned. Include only
-              real, verified project results.
+            <p className="mt-4 text-base leading-8 text-foreground/80">
+              {project.outcome ??
+                "Describe what you delivered and what you learned. Include only real, verified project results."}
             </p>
           </div>
         </Reveal>
