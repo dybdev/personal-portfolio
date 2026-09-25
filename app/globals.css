@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/montserrat";
+@import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
@@ -47,6 +48,12 @@
     0 2px 6px 0 rgba(34, 34, 34, 0.04);
   --glass-blur: blur(26px) saturate(190%) contrast(102%) brightness(105%);
   color-scheme: light;
+
+  /* Custom Scrollbar Tokens - Light Mode */
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--color-primary) 48%, transparent);
+  --scrollbar-thumb-active: color-mix(in srgb, var(--color-primary) 75%, transparent);
 }
 
 :root[data-theme="dark"] {
@@ -78,6 +85,12 @@
     0 0 14px 1px rgba(255, 255, 255, 0.14);
   --glass-blur: blur(26px) saturate(180%) contrast(105%) brightness(108%);
   color-scheme: dark;
+
+  /* Custom Scrollbar Tokens - Dark Mode */
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: color-mix(in srgb, var(--color-white) 24%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--color-white) 50%, transparent);
+  --scrollbar-thumb-active: color-mix(in srgb, var(--color-white) 78%, transparent);
 }
 
 /* Keep the previous palette below the circular new-theme snapshot. */
@@ -109,6 +122,52 @@ html[data-theme-transition="active"]::view-transition-group(root) {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 7rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth,
+html.lenis {
+  scroll-behavior: auto !important;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--scrollbar-thumb-active);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* macOS Tahoe Liquid Glass Material: optical transmission, specular caustic rims, lens reflections, and deep vibrant blur. */

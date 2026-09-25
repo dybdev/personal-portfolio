@@ -1,47 +1,58 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import { useAnimate, useInView, useReducedMotion } from "motion/react";
+import { useState, useEffect, type ReactNode } from "react";
+import { motion, useReducedMotion } from "motion/react";
+
+export interface RevealProps {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  duration?: number;
+  y?: number;
+}
 
 export function Reveal({
   children,
   className,
   delay = 0,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  const [scope, animate] = useAnimate<HTMLDivElement>();
-  const inView = useInView(scope, { once: true, amount: 0.12 });
+  duration = 0.9,
+  y = 38,
+}: RevealProps) {
   const reduced = useReducedMotion();
-  const played = useRef(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!inView || reduced || played.current) return;
-    played.current = true;
-    const element = scope.current;
-    const animation = animate(
-      element,
-      { opacity: [0, 1], y: [18, 0] },
-      {
-        duration: 0.45,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    );
-    const finish = () => animation.complete();
-    element.addEventListener("focusin", finish);
-    return () => {
-      animation.complete();
-      element.removeEventListener("focusin", finish);
-    };
-  }, [inView, reduced, animate, scope, delay]);
+    setMounted(true);
+  }, []);
 
-  // Server-rendered content stays readable even before JavaScript loads.
+  // Before hydration on client or if reduced motion is requested, render standard content
+  if (!mounted || reduced) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
-    <div ref={scope} className={className}>
+    <motion.div
+      initial={{ opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{
+        once: true,
+        margin: "0px 0px -70px 0px",
+        amount: 0.12,
+      }}
+      transition={{
+        duration,
+        delay,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className={className}
+      onFocusCapture={(e) => {
+        // Accessibility: instantly show content when focused via keyboard navigation
+        const target = e.currentTarget;
+        target.style.opacity = "1";
+        target.style.transform = "none";
+      }}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }

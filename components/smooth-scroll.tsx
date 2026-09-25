@@ -1,16 +1,45 @@
 "use client";
 
-import { useEffect } from "react";
-import { animate } from "motion";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import Lenis from "lenis";
 
 export function SmoothScroll() {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
+  // Reset scroll on route change
   useEffect(() => {
-    let stop: (() => void) | undefined;
-    const cancel = () => {
-      stop?.();
-      stop = undefined;
-    };
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+  }, [pathname]);
+
+  useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reduced.matches) return;
+
+    // lerp: 0.075 gives that buttery smooth momentum sliding delay when scrolling
+    const lenis = new Lenis({
+      lerp: 0.075,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.2,
+      smoothWheel: true,
+      infinite: false,
+      autoRaf: false,
+      respectReducedMotion: true,
+    });
+
+    lenisRef.current = lenis;
+    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
     const handleClick = (event: MouseEvent) => {
       if (
         event.defaultPrevented ||
@@ -21,49 +50,60 @@ export function SmoothScroll() {
         event.altKey
       )
         return;
+
       const link =
         event.target instanceof Element
           ? event.target.closest<HTMLAnchorElement>("a[href]")
           : null;
+
       if (
         !link ||
         link.hasAttribute("download") ||
         (link.target && link.target !== "_self")
       )
         return;
+
       const url = new URL(link.href, location.href);
       if (
         url.origin !== location.origin ||
         url.pathname !== location.pathname ||
         url.search !== location.search ||
-        !url.hash ||
-        url.hash === "#main"
+        !url.hash
       )
         return;
+
       let id: string;
       try {
         id = decodeURIComponent(url.hash.slice(1));
       } catch {
         return;
       }
+
+      if (id === "top") {
+        event.preventDefault();
+        event.stopPropagation();
+        lenis.scrollTo(0, {
+          duration: 1.3,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+        if (location.hash !== url.hash) history.pushState(null, "", url.hash);
+        return;
+      }
+
       const target = document.getElementById(id);
       if (!target) return;
+
       event.preventDefault();
       event.stopPropagation();
-      cancel();
       link.closest("details")?.removeAttribute("open");
+
       const padding =
         parseFloat(
           getComputedStyle(document.documentElement).scrollPaddingTop,
-        ) || 0;
-      const top = Math.max(
-        0,
-        Math.min(
-          target.getBoundingClientRect().top + window.scrollY - padding,
-          document.documentElement.scrollHeight - window.innerHeight,
-        ),
-      );
+        ) || 96;
+
       if (location.hash !== url.hash) history.pushState(null, "", url.hash);
+
       const finish = () => {
         const addedTabIndex = !target.hasAttribute("tabindex");
         if (addedTabIndex) target.setAttribute("tabindex", "-1");
@@ -75,35 +115,36 @@ export function SmoothScroll() {
             { once: true },
           );
       };
-      if (reduced.matches) {
-        window.scrollTo({ top, behavior: "instant" });
-        finish();
-        return;
-      }
-      const controls = animate(window.scrollY, top, {
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
-        onUpdate: (value) =>
-          window.scrollTo({ top: value, behavior: "instant" }),
+
+      lenis.scrollTo(target, {
+        offset: -padding,
+        duration: 1.3,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         onComplete: finish,
       });
-      stop = () => controls.stop();
     };
+
     document.addEventListener("click", handleClick, true);
-    window.addEventListener("wheel", cancel, { passive: true });
-    window.addEventListener("touchstart", cancel, { passive: true });
-    window.addEventListener("keydown", cancel);
-    window.addEventListener("popstate", cancel);
-    reduced.addEventListener("change", cancel);
+
+    const handleReducedChange = () => {
+      if (reduced.matches) {
+        cancelAnimationFrame(rafId);
+        lenis.destroy();
+        lenisRef.current = null;
+        delete (window as unknown as { __lenis?: Lenis }).__lenis;
+      }
+    };
+    reduced.addEventListener("change", handleReducedChange);
+
     return () => {
-      cancel();
+      cancelAnimationFrame(rafId);
       document.removeEventListener("click", handleClick, true);
-      window.removeEventListener("wheel", cancel);
-      window.removeEventListener("touchstart", cancel);
-      window.removeEventListener("keydown", cancel);
-      window.removeEventListener("popstate", cancel);
-      reduced.removeEventListener("change", cancel);
+      reduced.removeEventListener("change", handleReducedChange);
+      lenis.destroy();
+      lenisRef.current = null;
+      delete (window as unknown as { __lenis?: Lenis }).__lenis;
     };
   }, []);
+
   return null;
 }

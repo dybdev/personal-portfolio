@@ -12,6 +12,7 @@ export const portfolio = {
   name: "dybdev",
   year: "2026",
   email: "", // Add your real email to enable the contact link.
+  avatar: "/images/profile.png",
   introduction:
     "Add a short introduction here — who you are, what you do, and the kind of work you want to put into the world.",
   approach:
